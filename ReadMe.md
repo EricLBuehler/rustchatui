@@ -23,41 +23,12 @@ This crate is ideal if you want a reusable, embeddable UI server.
 * Async, non-blocking Axum server
 * Works well alongside other Axum/Tokio servers
 
----
+# ⚡ Install and use globally:
 
-# 📚 Usage as a Library (Embedded UI Server)
-
-Add to your main server’s `Cargo.toml`:
-
-```toml
-[dependencies]
-rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.2" }
+```bash
+cargo install --path .
+chatui 8080
 ```
-
-Then call it conditionally:
-
-```rust
-use rustchatui::start_ui_server;
-use tokio::task;
-
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Main server...
-    let chat_ui_server = task::spawn(async {
-        start_ui_server(3000, "dist").await.unwrap();
-    });
-
-    // Wait for servers to run
-    chat_ui_server.await?;
-
-    Ok(())
-}
-```
-
-### Result:
-
-* 🚀 Rust Chat UI server running at http://localhost:3000
-
 ---
 
 # 🚀 Usage as a Standalone Binary
@@ -75,13 +46,86 @@ cargo run --release --bin chatui
 ```bash
 cargo run --release --bin chatui -- 8080
 ```
+---
 
-### Installed globally:
+## ✨🖥️ Built-in ChatGPT-like UI Features
 
-```bash
-cargo install --path .
-chatui 8080
+- 🌞 **Light Mode**  
+- 🌙 **Dark Mode**  
+- ⚡ **Fluent Response**  
+- 🎞️ **Animations**  
+- 🧠 **Thinking Process** *(embedded)*  
+- 🗂️ **Chat History Storage**  
+
+- ⚙️ **Settings Panel**:
+  > 🔑 OpenAI API Compatible Server URL / Key  
+  > 🎛️ Sampling Parameters  
+  > 🗄️ Context Cache  
+  > 📝 Auto Title Generation
+
+---
+![Screenshot of the ChatUI](./screenshot.png)
+
+
+# 📚 Usage as a Library (Embedded UI Server to your Rust program)
+
+Add to your main server’s `Cargo.toml`:
+
+```toml
+[dependencies]
+rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.3" }
 ```
+
+Then call it conditionally:
+
+```rust
+use rustchatui::start_ui_server;
+use tokio::task;
+
+#[tokio::main]
+async fn main() -> anyhow::Result<()> {
+    // Main server...
+    let chat_ui_server = task::spawn(async {
+        // Port 3000 -> http://localhost:3000
+        start_ui_server(3000, "dist").await.unwrap();
+    });
+
+    // Wait for servers to run
+    chat_ui_server.await?;
+
+    Ok(())
+}
+```
+
+Running multiple tasks along with Chat UI Server
+
+```rust
+        let app = ... // use arg.port, e.g, 2999
+        let mut tasks = Vec::new();
+        // Your other tasks
+        tasks.push(tokio::spawn(async move {
+            if let Err(e) = axum::serve(listener, app).await {
+                eprintln!("Chat API server error: {e:?}");
+            }
+        }));
+
+        if args.ui_server {
+            tasks.push(tokio::spawn(async move {
+                // Use this crate with another port
+                start_ui_server((args.port + 1) as u16, "dist")
+                    .await
+                    .unwrap();
+            }));
+        }
+
+        // Run tasks in parallel
+        futures::future::try_join_all(tasks)
+            .await
+            .map_err(candle_core::Error::wrap)?;
+```
+### Result:
+
+* 🚀 Rust Chat UI server running at http://localhost:3000
 
 ---
 
@@ -113,10 +157,12 @@ rustchatui/
   Cargo.toml
 ```
 
-You may copy your frontend build like:
+**You may copy your other Web frontend build like:**
 
 ```bash
+# build your typescript project
 npm run build
+# copy the dist folder to rustchatui to serve
 cp -r dist/ rustchatui/dist/
 ```
 
