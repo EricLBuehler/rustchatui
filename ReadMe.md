@@ -18,7 +18,7 @@ This crate is ideal if you want a reusable, embeddable UI server.
 * Run standalone via:
 
   ```bash
-  cargo run --release --bin chatui
+  cargo run --release --bin chatui --ui-port 8080 --api-port 8000
   ```
 * Async, non-blocking Axum server
 * Works well alongside other Axum/Tokio servers
@@ -27,7 +27,10 @@ This crate is ideal if you want a reusable, embeddable UI server.
 
 ```bash
 cargo install --path .
-chatui 8080
+# Use local API server
+chatui --ui-port 8080 --api-port 8000
+# Use remote API server
+chatui --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
 ```
 ---
 
@@ -35,17 +38,18 @@ chatui 8080
 
 This crate includes a `main.rs`, so you can run the server directly.
 
-### Run default port (3000):
+### Run on port (8080) and communicate with local (port 8000) API server:
 
 ```bash
-cargo run --release --bin chatui
+cargo run --release --bin chatui -- --ui-port 8080 --api-port 8000
 ```
 
-### Run on custom port:
+### Run on port (8080) and communicate with remote API server:
 
 ```bash
-cargo run --release --bin chatui -- 8080
+cargo run --release --bin chatui -- --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
 ```
+
 ---
 
 ## ✨🖥️ Built-in ChatGPT-like UI Features
@@ -74,7 +78,7 @@ Add to your main server’s `Cargo.toml`:
 
 ```toml
 [dependencies]
-rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.6" }
+rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.7" }
 ```
 
 Then call it conditionally:
@@ -83,22 +87,7 @@ Then call it conditionally:
 use rustchatui::start_ui_server;
 use tokio::task;
 
-#[tokio::main]
-async fn main() -> anyhow::Result<()> {
-    // Main server...
-    let chat_ui_server = task::spawn(async {
-        // Port 3000 -> http://localhost:3000
-        start_ui_server(3000).await.unwrap();
-    });
-
-    // Wait for servers to run
-    chat_ui_server.await?;
-
-    Ok(())
-}
-```
-
-Running multiple tasks along with Chat UI Server
+// Running multiple tasks along with Chat UI Server
 
 ```rust
         let app = ... // use arg.port, e.g, 2999
@@ -113,7 +102,7 @@ Running multiple tasks along with Chat UI Server
         if args.ui_server {
             tasks.push(tokio::spawn(async move {
                 // Use this crate with another port
-                start_ui_server((args.port + 1) as u16)
+                start_ui_server(port as u16, (args.port + 1) as u16, None, None)
                     .await
                     .unwrap();
             }));
@@ -135,7 +124,12 @@ Running multiple tasks along with Chat UI Server
 The crate exposes a single function:
 
 ```rust
-pub async fn start_ui_server(port: u16, dist_path: impl Into<String>) -> Result<()>
+async fn start_ui_server(
+    ui_port: u16, // Port for this UI web server
+    api_port: Option<u16>, // Port for Local API server
+    server_url: Option<String>, // Remote API server url: http://api.openai.com/v1
+    api_key: Option<String>, // api key for local or remote API server
+) -> Result<()> 
 ```
 
 This:
@@ -143,6 +137,7 @@ This:
 * Builds a small Axum server
 * Serves the `dist/` folder via `ServeDir`
 * Listens on `0.0.0.0:<port>`
+* Call local server if `api_port` configured or call remote api server if `server_url` provided
 * Never blocks other async tasks (safe to spawn concurrently)
 
 ---
@@ -158,7 +153,7 @@ rustchatui/
   Cargo.toml
 ```
 
-**You may copy your other Web frontend build like:**
+You may copy your other Web frontend build:
 
 ```bash
 # build your typescript project
@@ -169,26 +164,6 @@ cp -r dist/ rustchatui/dist/
 
 ---
 
-# 🛠 Building Frontend + Running Server
-
-```
-npm run build
-cargo run --release --bin chatui
-```
-
----
-
 # 🏁 License
 
 MIT — free to use in personal and commercial projects.
-
----
-
-If you want, I can also generate:
-
-✅ A full `Cargo.toml`
-✅ Example workspace setup
-✅ Clap CLI integration
-✅ GitHub Actions to auto-copy `dist/` into the crate
-
-Just tell me!
