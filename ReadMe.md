@@ -56,6 +56,7 @@ cargo run --release --bin chatui -- 8080
 - 🎞️ **Animations**  
 - 🧠 **Thinking Process** *(embedded)*  
 - 🗂️ **Chat History Storage**  
+- 📈 **Token Usage Indicator**
 
 - ⚙️ **Settings Panel**:
   > 🔑 OpenAI API Compatible Server URL / Key  
@@ -73,7 +74,7 @@ Add to your main server’s `Cargo.toml`:
 
 ```toml
 [dependencies]
-rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.5" }
+rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.6" }
 ```
 
 Then call it conditionally:
