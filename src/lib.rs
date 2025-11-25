@@ -1,5 +1,6 @@
 use anyhow::Result;
 use axum::{Router, response::IntoResponse};
+use colored::*;
 use include_dir::{Dir, include_dir};
 use inquire::Select;
 use local_ip_address::local_ip;
@@ -81,12 +82,17 @@ pub async fn start_ui_server(
 
     if is_local {
         println!(
-            "\r\n 🖥️ Rust Chat UI server running at (click to open): http://localhost:{ui_port} (Local Access Only)"
+            "\n🖥️ Chat UI server running at ({}): {} (Local Access Only)",
+            format!("click to open").bold(),
+            format!("http://localhost:{ui_port}").blue().bold()
         );
     } else {
         let ip = local_ip().unwrap_or_else(|_| "127.0.0.1".parse().unwrap());
         println!(
-            "\r\n🖥️ Rust Chat UI server running at (click to open): http://{ip}:{ui_port} (Remote Access, Recommended)"
+            "\n🖥️ Chat UI server running at ({}): {} (Remote Access, {})",
+            format!("click to open").bold(),
+            format!("http://{ip}:{ui_port}").blue().bold(),
+            format!("Recommended").red().bold()
         );
     }
 
