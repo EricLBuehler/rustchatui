@@ -9,6 +9,8 @@ It can be used:
 
 This crate is ideal if you want a reusable, embeddable UI server.
 
+💡This crate is a Rust wrapper for the **release build** of `chatclient` (co-developed with Gemini): [https://github.com/guoqingbao/chatclient](https://github.com/guoqingbao/chatclient)
+
 ---
 
 ## ✨ Features
@@ -78,7 +80,7 @@ Add to your main server’s `Cargo.toml`:
 
 ```toml
 [dependencies]
-rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.16" }
+rustchatui = { git = "https://github.com/guoqingbao/rustchatui.git", version="0.1.17" }
 ```
 
 Then call it conditionally:
