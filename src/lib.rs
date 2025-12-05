@@ -15,14 +15,12 @@ struct AppConfig {
 }
 
 pub fn choose_url(port: u16) -> (String, bool) {
-    let ip = local_ip().unwrap_or("127.0.0.1".parse().unwrap());
-
-    let local_url = format!("http://localhost:{port}/v1/");
-    let lan_url = format!("http://{ip}:{port}/v1/");
+    let local_url = format!("http://0.0.0.0:{port}/v1/");
+    let lan_url = format!("http://localhost:{port}/v1/");
 
     let options = vec![
         format!("LAN Access this API server   → {}", lan_url),
-        format!("Local Access this API server → {}", local_url),
+        format!("General Access this API server → {}", local_url),
     ];
 
     let ans = Select::new(
