@@ -20,7 +20,7 @@ This crate is ideal if you want a reusable, embeddable UI server.
 * Run standalone via:
 
   ```bash
-  cargo run --release --bin chatui --ui-port 8080 --api-port 8000
+  cargo run --release --bin rustchatui --ui-port 8080 --api-port 8000
   ```
 * Async, non-blocking Axum server
 * Works well alongside other Axum/Tokio servers
@@ -30,9 +30,9 @@ This crate is ideal if you want a reusable, embeddable UI server.
 ```bash
 cargo install --path .
 # Use local API server
-chatui --ui-port 8080 --api-port 8000
+rustchatui --ui-port 8080 --api-port 8000
 # Use remote API server
-chatui --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
+rustchatui --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
 ```
 ---
 
@@ -43,13 +43,13 @@ This crate includes a `main.rs`, so you can run the server directly.
 ### Run on port (8080) and communicate with local (port 8000) API server:
 
 ```bash
-cargo run --release --bin chatui -- --ui-port 8080 --api-port 8000
+cargo run --release --bin rustchatui -- --ui-port 8080 --api-port 8000
 ```
 
 ### Run on port (8080) and communicate with remote API server:
 
 ```bash
-cargo run --release --bin chatui -- --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
+cargo run --release --bin rustchatui -- --ui-port 8080 --server-url http://api.openai.com/v1 --api-key xxxxx
 ```
 
 ---
@@ -71,5 +71,5 @@ cargo run --release --bin chatui -- --ui-port 8080 --server-url http://api.opena
   > 📝 Auto Title Generation
 
 ---
-![Screenshot of the ChatUI](./screenshot.png)
+![Screenshot of the rustchatui](./screenshot.png)
 
